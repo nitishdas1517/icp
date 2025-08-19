@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Multi-Agent System Architecture</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: #34495e;
+            font-size: 1.8em;
+            margin: 40px 0 20px 0;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .diagram-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+        
+        .agent {
+            fill: #3498db;
+            stroke: #2980b9;
+            stroke-width: 2;
+        }
+        
+        .agent-text {
+            fill: white;
+            font-size: 12px;
+            font-weight: bold;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+        
+        .message-bus {
+            fill: #e74c3c;
+            stroke: #c0392b;
+            stroke-width: 2;
+        }
+        
+        .external {
+            fill: #95a5a6;
+            stroke: #7f8c8d;
+            stroke-width: 2;
+        }
+        
+        .llm {
+            fill: #9b59b6;
+            stroke: #8e44ad;
+            stroke-width: 2;
+        }
+        
+        .flow-arrow {
+            stroke: #2c3e50;
+            stroke-width: 2;
+            marker-end: url(#arrowhead);
+        }
+        
+        .flow-text {
+            font-size: 11px;
+            fill: #2c3e50;
+            text-anchor: middle;
+        }
+        
+        .legend {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .legend-item {
+            display: inline-block;
+            margin: 5px 15px 5px 0;
+            font-size: 14px;
+        }
+        
+        .legend-color {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .metric-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 LLM Multi-Agent System Architecture</h1>
+        
+        <h2>🏗️ High-Level System Architecture</h2>
+        <div class="diagram-container">
+            <svg width="1200" height="700" viewBox="0 0 1200 700">
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                            refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#2c3e50"/>
+                    </marker>
+                    
+                    <linearGradient id="agentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#2980b9;stop-opacity:1" />
+                    </linearGradient>
+                    
+                    <linearGradient id="mbGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#e74c3c;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#c0392b;stop-opacity:1" />
+                    </linearGradient>
+                    
+                    <linearGradient id="llmGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#9b59b6;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#8e44ad;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                
+                <!-- External APIs -->
+                <rect x="50" y="50" width="150" height="80" rx="10" class="external"/>
+                <text x="125" y="85" class="agent-text">External APIs</text>
+                <text x="125" y="100" class="agent-text" font-size="10">LinkedIn, Crunchbase</text>
+                
+                <!-- User Input -->
+                <rect x="50" y="150" width="150" height="60" rx="10" class="external"/>
+                <text x="125" y="185" class="agent-text">User Input</text>
+                
+                <!-- Message Bus (Central Hub) -->
+                <circle cx="600" cy="350" r="80" fill="url(#mbGradient)"/>
+                <text x="600" y="345" class="agent-text" font-size="14">Message Bus</text>
+                <text x="600" y="360" class="agent-text" font-size="10">Coordination Hub</text>
+                
+                <!-- Orchestrator Agent -->
+                <rect x="300" y="50" width="120" height="80" rx="10" fill="url(#agentGradient)"/>
+                <text x="360" y="85" class="agent-text">Orchestrator</text>
+                <text x="360" y="100" class="agent-text" font-size="10">Master Planner</text>
+                
+                <!-- Research Agent -->
+                <rect x="450" y="150" width="120" height="80" rx="10" fill="url(#agentGradient)"/>
+                <text x="510" y="185" class="agent-text">Research</text>
+                <text x="510" y="200" class="agent-text" font-size="10">Data Gatherer</text>
+                
+                <!-- Company Analysis Agent -->
+                <rect x="750" y="150" width="120" height="80" rx="10" fill="url(#agentGradient)"/>
+                <text x="810" y="185" class="agent-text">Company</text>
+                <text x="810" y="200" class="agent-text" font-size="10">Relationship Analyzer</text>
+                
+                <!-- Profile Analysis Agent -->
+                <rect x="450" y="500" width="120" height="80" rx="10" fill="url(#agentGradient)"/>
+                <text x="510" y="535" class="agent-text">Profile</text>
+                <text x="510" y="550" class="agent-text" font-size="10">Career Analyzer</text>
+                
+                <!-- ICP Matching Agent -->
+                <rect x="750" y="500" width="120" height="80" rx="10" fill="url(#agentGradient)"/>
+                <text x="810" y="535" class="agent-text">ICP Matcher</text>
+                <text x="810" y="550" class="agent-text" font-size="10">Criteria Validator</text>
+                
+                <!-- Decision Synthesis Agent -->
+                <rect x="950" y="300" width="120" height="80" rx="10" fill="url(#agentGradient)"/>
+                <text x="1010" y="335" class="agent-text">Decision</text>
+                <text x="1010" y="350" class="agent-text" font-size="10">Final Synthesizer</text>
+                
+                <!-- LLM Engine -->
+                <rect x="300" y="600" width="200" height="80" rx="10" fill="url(#llmGradient)"/>
+                <text x="400" y="635" class="agent-text" font-size="14">LLM Engine</text>
+                <text x="400" y="650" class="agent-text" font-size="10">GPT-4 / Claude</text>
+                
+                <!-- Connections -->
+                <!-- User to Orchestrator -->
+                <line x1="200" y1="180" x2="300" y2="90" class="flow-arrow"/>
+                
+                <!-- External APIs to Research -->
+                <line x1="200" y1="90" x2="450" y2="190" class="flow-arrow"/>
+                
+                <!-- Orchestrator to Message Bus -->
+                <line x1="420" y1="90" x2="520" y2="350" class="flow-arrow"/>
+                
+                <!-- Agents to Message Bus -->
+                <line x1="570" y1="190" x2="580" y2="280" class="flow-arrow"/>
+                <line x1="750" y1="190" x2="620" y2="280" class="flow-arrow"/>
+                <line x1="570" y1="540" x2="580" y2="420" class="flow-arrow"/>
+                <line x1="750" y1="540" x2="620" y2="420" class="flow-arrow"/>
+                <line x1="950" y1="340" x2="680" y2="350" class="flow-arrow"/>
+                
+                <!-- Message Bus to LLM -->
+                <line x1="600" y1="430" x2="400" y2="600" class="flow-arrow"/>
+                
+                <!-- Flow Labels -->
+                <text x="250" y="135" class="flow-text">Profile Request</text>
+                <text x="325" y="155" class="flow-text">Data Enrichment</text>
+                <text x="460" y="220" class="flow-text">Agent Coordination</text>
+                <text x="500" y="515" class="flow-text">LLM Reasoning</text>
+            </svg>
+        </div>
+        
+        <div class="legend">
+            <h3>🎨 Component Legend</h3>
+            <div class="legend-item">
+                <span class="legend-color" style="background: linear-gradient(135deg, #3498db, #2980b9);"></span>
+                <strong>Intelligent Agents</strong> - LLM-powered reasoning units
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: linear-gradient(135deg, #e74c3c, #c0392b);"></span>
+                <strong>Message Bus</strong> - Communication coordination hub
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);"></span>
+                <strong>LLM Engine</strong> - Large Language Model processing
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #95a5a6;"></span>
+                <strong>External Systems</strong> - APIs and data sources
+            </div>
+        </div>
+        
+        <h2>🔄 Agent Interaction Flow</h2>
+        <div class="diagram-container">
+            <svg width="1200" height="600" viewBox
