@@ -620,5 +620,3 @@ graph TB
 - Infrastructure: $5-10
 - External APIs: $10-20
 - Total: $30-55 per 1000 profiles
-
-This comprehensive system represents a production-ready, intelligent approach to job change detection and ICP matching using cutting-edge LLM technology with proper engineering practices.
